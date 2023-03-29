@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-unsigned int hash(char *s)
+unsigned int hash(char *key)
 {
-    unsigned int h = 0;
-    while (*s)
-        h += (unsigned int)*s++;
+    unsigned int h = 0, hash_mul = 31;
+    while (*key)
+        h = h * hash_mul + (unsigned int)*key++;
     return h % 200000;
 }
 
