@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "hasht.h"
 #include <sys/time.h>
+#include <time.h>
 
 double wtime()
 {
@@ -33,11 +34,12 @@ int main(int argc, char **argv)
         if (i % 10000 == 0)
         {
             char *w = string[getrand(0, i - 1)];
-            listnode *node;
-            double t = wtime();
-            node = hashtab_lookup(table, w);
-            t = wtime() - t;
-            printf("%d: n = %d, time = %.20lf\n", ++count, i - 1, t);
+            clock_t t;
+            t = clock();
+            listnode *node = hashtab_lookup(table, w);
+            t = clock() - t;
+            double time_taken = ((double)t) / CLOCKS_PER_SEC;
+            printf("%d: n = %d, time = %lf\n", ++count, i, time_taken);
         }
     }
     return 0;

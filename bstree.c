@@ -96,6 +96,63 @@ bstree *bstree_parent(bstree *tree, char *key)
     return parent;
 }
 
+// struct node *deleteNode(struct node *root, int key)
+// {
+//     // base case
+//     if (root == NULL)
+//         return root;
+
+//     // If the key to be deleted is smaller than the
+//     // root's key, then it lies in left subtree
+//     if (key < root->key)
+//         root->left = deleteNode(root->left, key);
+
+//     // If the key to be deleted is greater than the root's key,
+//     // then it lies in right subtree
+//     else if (key > root->key)
+//         root->right = deleteNode(root->right, key);
+
+//     // if key is same as root's key
+//     else
+//     {
+//         // If key is present more than once, simply decrement
+//         // count and return
+//         if (root->count > 1)
+//         {
+//             (root->count)--;
+//             return root;
+//         }
+
+//         // ElSE, delete the node
+
+//         // node with only one child or no child
+//         if (root->left == NULL)
+//         {
+//             struct node *temp = root->right;
+//             free(root);
+//             return temp;
+//         }
+//         else if (root->right == NULL)
+//         {
+//             struct node *temp = root->left;
+//             free(root);
+//             return temp;
+//         }
+
+//         // node with two children: Get the inorder successor (smallest
+//         // in the right subtree)
+//         struct node *temp = minValueNode(root->right);
+
+//         // Copy the inorder successor's content to this node
+//         root->key = temp->key;
+//         root->count = temp->count;
+
+//         // Delete the inorder successor
+//         root->right = deleteNode(root->right, temp->key);
+//     }
+//     return root;
+// }
+
 // bstree *bstree_delete(bstree *tree, char *key)
 // {
 //     bstree *node = bstree_lookup(tree, key);
