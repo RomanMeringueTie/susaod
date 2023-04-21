@@ -1,20 +1,31 @@
 #include "hasht.h"
 #define HASHTAB_SIZE 200000
 
-unsigned int hashtab_hash(char *key)
+unsigned int ADDHash(char *s)
 {
-    unsigned int h = 0, hash_mul = 31;
+    unsigned int h = 0;
+    while (*s)
+        h += (unsigned int)*s++;
+    return h % HASHTAB_SIZE;
+}
+
+unsigned int KRHash(char *key)
+{
+    unsigned int h = 0, hash_mul = 13131;
     while (*key)
         h = h * hash_mul + (unsigned int)*key++;
     return h % HASHTAB_SIZE;
 }
 
-unsigned int KRHash(char *s)
+unsigned int XORHash(char *key)
 {
-    unsigned int h = 0, hash_mul = 31;
-    while (*s)
-        h = h * hash_mul + (unsigned int)*s++;
-    return h % 200000;
+    unsigned int h = 0;
+    while (*key)
+    {
+        h = ((h << 5) + h) ^ (unsigned int)*key;
+        key++;
+    }
+    return h % HASHTAB_SIZE;
 }
 
 void hashtab_init(struct listnode **hashtab)
@@ -25,11 +36,14 @@ void hashtab_init(struct listnode **hashtab)
         hashtab[i] = NULL;
 }
 
-void hashtab_add(struct listnode **hashtab, char *key, int value)
+void hashtab_add(struct listnode **hashtab, char *key, int value, int hf)
 {
     listnode *node;
-
-    int index = hashtab_hash(key);
+    int index = 0;
+    if (hf == 1)
+        index = KRHash(key);
+    else
+        index = XORHash(key);
     node = malloc(sizeof(*node));
     if (node != NULL)
     {
@@ -40,11 +54,14 @@ void hashtab_add(struct listnode **hashtab, char *key, int value)
     }
 }
 
-struct listnode *hashtab_lookup(struct listnode **hashtab, char *key)
+struct listnode *hashtab_lookup(struct listnode **hashtab, char *key, int hf)
 {
     listnode *node;
-
-    int index = KRHash(key);
+    int index = 0;
+    if (hf == 1)
+        index = KRHash(key);
+    else
+        index = XORHash(key);
     for (node = hashtab[index]; node != NULL; node = node->next)
     {
         if (0 == strcmp(node->key, key))
@@ -56,7 +73,7 @@ struct listnode *hashtab_lookup(struct listnode **hashtab, char *key)
 void hashtab_delete(struct listnode **hashtab, char *key)
 {
     listnode *node, *prev = NULL;
-    int index = hashtab_hash(key);
+    int index = KRHash(key);
     for (node = hashtab[index]; node != NULL; node = node->next)
     {
         if (0 == strcmp(node->key, key))

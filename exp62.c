@@ -19,7 +19,7 @@ int getrand(int min, int max)
 int main(int argc, char **argv)
 {
     FILE *file;
-    file = fopen("wordsworst.txt", "r+");
+    file = fopen("wоrdsworst.txt", "r+");
     int n = 200001;
     char string[n][20];
     for (int i = 0; i < n; i++)

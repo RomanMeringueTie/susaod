@@ -4,15 +4,17 @@
 #include <sys/time.h>
 #include <time.h>
 
-int getrand(int min, int max)
+double wtime()
 {
-    return (double)rand() / (RAND_MAX + 1.0) * (max - min) + min;
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return (double)t.tv_sec + (double)t.tv_usec * 1E-6;
 }
 
 int main()
 {
     FILE *file;
-    file = fopen("words.txt", "r+");
+    file = fopen("wordsaverage.txt", "r+");
     int n = 200001;
     char string[n][20];
     for (int i = 0; i < n; i++)
@@ -25,13 +27,12 @@ int main()
         bstree_add(tree, string[i - 1], i - 1);
         if (i % 10000 == 0)
         {
-            char *w = string[getrand(0, i)];
             clock_t t;
             t = clock();
-            bstree *node1 = bstree_lookup(tree, w);
+            bstree *node1 = bstree_max(tree);
             t = clock() - t;
             double time_taken = ((double)t) / CLOCKS_PER_SEC;
-            printf("%d: n = %d, time = %.6lf\n", ++count, i, time_taken);
+            printf("%d: n = %d, time = %lf\n", ++count, i, time_taken);
         }
     }
     return 0;
