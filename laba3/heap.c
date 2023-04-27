@@ -49,7 +49,7 @@ int heap_insert(struct heap *h, int key, int value)
     h->nodes[h->nnodes].key = key;
     h->nodes[h->nnodes].value = value;
     /* HeapifyUp */
-    for (int i = h->nnodes; i > 1 && h->nodes[i].key < h->nodes[i / 2].key; i = i / 2)
+    for (int i = h->nnodes; h->nodes[i].key < h->nodes[i / 2].key; i = i / 2)
         heap_swap(&h->nodes[i], &h->nodes[i / 2]);
     return 0;
 }
@@ -71,9 +71,9 @@ void heap_heapify(struct heap *h, int index)
         int left = 2 * index;
         int right = 2 * index + 1;
         int largest = index;
-        if (left <= h->nnodes && h->nodes[left].key > h->nodes[largest].key)
+        if (left <= h->nnodes && h->nodes[left].key < h->nodes[largest].key)
             largest = left;
-        if (right <= h->nnodes && h->nodes[right].key > h->nodes[largest].key)
+        if (right <= h->nnodes && h->nodes[right].key < h->nodes[largest].key)
             largest = right;
         if (largest == index)
             break;
@@ -84,10 +84,8 @@ void heap_heapify(struct heap *h, int index)
 
 int heap_increase_key(struct heap *h, int index, int newkey)
 {
-    if (h->nodes[index].key >= newkey)
-        return -1;
     h->nodes[index].key = newkey;
-    while (index > 1 && h->nodes[index].key > h->nodes[index / 2].key)
+    while (h->nodes[index].key < h->nodes[index / 2].key)
     {
         heap_swap(&h->nodes[index], &h->nodes[index / 2]);
         index /= 2;

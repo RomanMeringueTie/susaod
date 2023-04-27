@@ -5,47 +5,63 @@
 #include "graph.h"
 #include "heap.h"
 
-struct heap *dijkstra(struct graph *g, int src, int *d, int *prev)
+void dijkstra(struct heap *q, struct graph *graph, int src)
 {
-    struct heap *q = heap_create(g->nvertices);
-    for (int i = 0; i < g->nvertices; i++)
+    graph->h[src] = src;
+    graph->d[src] = 0;
+    graph->prev[src] = -1;
+    heap_insert(q, graph->d[src], src);
+    for (int i = 1; i < graph->nvertices + 1; i++)
     {
-        d[i] = 1000;
-        prev[i] = -1;
-        heap_insert(q, i, d[i]);
-    }
-    d[src] = 0;
-    prev[src] = -1;
-    heap_insert(q, src, d[src]);
-    for (int i = 0; i < g->nvertices; i++)
-    {
-        heap_extract_min(q);
-        *g->visited = i;
-        g->visited++;
-    }
-    for (int i = 0; i < g->nvertices; i++)
-    {
-        int is_visited = 0;
-        for (int *j = g->visited; g->visited != NULL; j++)
+        if (i != src)
         {
-            if (i == *j)
-            {
-                is_visited = 1;
-                break;
-            }
+            graph->h[i] = 0;
+            graph->d[i] = 99999999;
+            graph->prev[i] = -1;
+            heap_insert(q, graph->d[i], i);
         }
-        if (is_visited)
+    }
+    for (int i = 1; i < graph->nvertices + 1; i++)
+    {
+        struct heapnode node = heap_extract_min(q);
+        int v = node.value;
+        graph->h[v] = v;
+        for (int j = 1; j < graph->nvertices + 1; j++)
         {
-            for (int j = 0; j < g->nvertices; j++)
+            if (graph->m[v - 1][j - 1] && !graph->h[j])
             {
-                if (d[i] + g->m[i][j] < d[j])
+                if (graph->d[v] + graph->m[v - 1][j - 1] < graph->d[j])
                 {
-                    d[j] = d[i] + g->m[i][j];
-                    heap_increase_key(q, j, d[j]);
-                    prev[j] = i;
+                    graph->d[j] = graph->d[v] + graph->m[v - 1][j - 1];
+                    heap_increase_key(q, j, graph->d[j]);
+                    graph->prev[j] = v;
                 }
             }
         }
     }
-    return q;
+}
+
+void shortest(struct heap *q, struct graph *graph, int src, int dst)
+{
+    int i = dst;
+    int pathlen = 1;
+    while (i != src)
+    {
+        pathlen++;
+        i = graph->prev[i];
+    }
+    int j = 0;
+    i = dst;
+    int path[graph->nvertices];
+    while (i != src)
+    {
+        path[pathlen - j] = i;
+        i = graph->prev[i];
+        j++;
+    }
+    for (int i = 2; i < pathlen + 1; i++)
+    {
+        printf("%d ", path[i]);
+    }
+    printf("\n");
 }

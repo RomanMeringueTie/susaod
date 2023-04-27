@@ -5,8 +5,14 @@ struct graph
 {
     int nvertices;
     int **m;
-    int *visited;
+    int *d;
+    int *h;
+    int *prev;
 };
+
+struct graph *graph_create(int nvertices);
+
+void graph_free(struct graph *g);
 
 struct graph *graph_create(int nvertices);
 
